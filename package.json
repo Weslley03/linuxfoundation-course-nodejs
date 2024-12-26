@@ -1,0 +1,17 @@
+{
+  "name": "course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "static": "npx serve -p 5050 static",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^5.2.0",
+    "fastify-cli": "^7.3.0",
+    "serve": "^14.2.4"
+  }
+}
