@@ -51,14 +51,14 @@
         summary { cursor: pointer; }
         p { text-indent: 1.5rem; }
       </style>
-       <details>
-        <summary>
-          <strong>
-            <slot name="name"></slot>
-          </strong> - <em><slot name="rrp"></slot></em>
-        </summary>
-        <p><slot name="info"></slot></p>
-      </details>
+        <details>
+          <summary>
+            <strong><slot name="name"></slot></strong> -
+            <em><slot name="rrp"></slot></em>
+            <small>[Orders: <slot name="orders">pending</slot>]</small>
+          </summary>
+          <p><slot name="info"></slot></p>
+        </details>
     </template>
   </body>
 </html>
