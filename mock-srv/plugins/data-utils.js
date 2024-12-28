@@ -1,9 +1,7 @@
 'use strict';
 
 import fp from 'fastify-plugin';
-import { promisify } from 'node:util';
-
-const timeout = promisify(setTimeout);
+import { PassThrough } from "node:stream";
 
 const orders = {
   A1: { total: 3 },
@@ -16,17 +14,33 @@ const catToPrefix = {
   confectionery: 'B',
 };
 
+const orderStream = new PassThrough({ objectMode: true });
+
 async function* realtimeOrdersSimulator() {
-  const ids = Object.keys(orders);
-  while (true) {
-    const delta = Math.floor(Math.random() * 7) + 1;
-    const id = ids[Math.floor(Math.random() * ids.length)];
-    orders[id].total += delta;
-    const { total } = orders[id];
+  for await (const { id, total } of orderStream) {
     yield JSON.stringify({ id, total });
-    await timeout(1500);
   }
 };
+
+function addOrder(id, amount) {
+  if(orders.hasOwnProperty(id) === false) {
+    const err = new Error(`Order ${id} not found`);
+    err.status = 404;
+    throw err;
+  };
+
+  if(Number.isInteger(amount) === false) {
+    console.log(amount)
+    const err = new Error(`Supplied amount must be integer`);
+    err.status = 400;
+    throw err;
+  }
+
+  orders[id].total += amount;
+  const { total } = orders[id];
+  console.log("adding order: %o", { id, total });
+  orderStream.write({ id, total }); 
+}
 
 function* currentOrders(category) {
   const idPrefix = catToPrefix[category];
@@ -46,6 +60,7 @@ const calculateID = (idPrefix, data) => {
 export default fp(async function(fastify, opt) {
   fastify.decorate("currentOrders", currentOrders);
   fastify.decorate("realtimeOrders", realtimeOrdersSimulator);
+  fastify.decorate("addOrder", addOrder);
   fastify.decorate('mockDataInsert', function(request, category, data) {
     const idPrefix = catToPrefix[category];
     const id = calculateID(idPrefix, data);
