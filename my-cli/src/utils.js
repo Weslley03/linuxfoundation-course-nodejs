@@ -1,5 +1,15 @@
 import { got } from "got";
-import { displayAmount, displayID, displayInfo, displayName, displaySuccess, displayText, displayTimestamp } from "./displays.js";
+import { displayAmount, 
+  displayCategory, 
+  displayID, 
+  displayInfo, 
+  displayKey, 
+  displayName, 
+  displayRRP, 
+  displaySuccess, 
+  displayText, 
+  displayTimestamp 
+} from "./displays.js";
 
 //set the API URL
 const API = "http://localhost:3000";
@@ -109,9 +119,9 @@ export async function listCategoryItems(category) {
   log(displayTimestamp());
   log(`${displayInfo(`List IDs`)}`);
   try {
-    // Use GOT to make a GET request to the API
+    //use GOT to make a GET request to the API
     const result = await got(`${API}/${category}/`).json();
-    // Log the result to the console
+    //log the result to the console
     log(`${displaySuccess("IDs received from API:")}`);
     for (const item of result) {
       log(`
